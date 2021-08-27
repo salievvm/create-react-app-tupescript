@@ -8,8 +8,18 @@ import { ITodo } from './interface';
 
 declare var confirm: (question: string) => boolean
 
+const jsonParse = (str: string): [] => {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return [];
+    }
+    return JSON.parse(str);
+}
+
 const App: React.FC = () => {
-    const [todos, setTodos] = React.useState<ITodo[]>([]);
+    const localTodos: string = localStorage.getItem('TODOS') || '[]';
+    const [todos, setTodos] = React.useState<ITodo[]>(jsonParse(localTodos) as ITodo[]);
 
     const addHandler = (title: string) => {
         const newTodo: ITodo = {
@@ -39,6 +49,11 @@ const App: React.FC = () => {
             })
         })
     }
+
+    React.useEffect(() => {
+        localStorage.setItem('TODOS', JSON.stringify(todos))
+        return () => {}
+    }, [todos]);
 
     return (
         <div>
